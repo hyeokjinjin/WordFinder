@@ -1,24 +1,46 @@
 import java.util.Scanner;
 
-public class launch {
+public class Launch {
+
+    private static String GAME_MODE = null;
+
     public static void main(String[] args) {
-    
-        String userInput = null;
+        
+        Launch launch = new Launch();
+        if (GAME_MODE.equals("word hunt")) {
+            launch.wordHunt();
+        } else if (GAME_MODE.equals("anagrams")) {
+            launch.anagrams();
+        }
+    }
+
+
+    public Launch() {
         Scanner scan = new Scanner(System.in);
-        while (userInput == null) {
+        while (GAME_MODE == null) {
             printLogo();
             System.out.print("Enter Game Option: ");
-            userInput = scan.nextLine();
-            if (!userInput.equals("anagrams") && !userInput.equals("word hunt")) {
-                userInput = null;
+            String userInput = scan.nextLine();
+            if (userInput.equals("anagrams") || userInput.equals("word hunt")) {
+                GAME_MODE = userInput;
             }
             System.out.print("\033\143");
         }
         scan.close();
-        System.out.println(userInput);
     }
 
-    public static void printLogo() {
+
+    public void anagrams() {
+
+    }
+
+
+    public void wordHunt() {
+
+    }
+
+
+    public void printLogo() {
         System.out.println("                                                           !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("    Welcome to                                             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("                             _   _                _        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
