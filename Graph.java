@@ -77,8 +77,20 @@ public class Graph {
         int count = sortedWords.size();
         for (String word : sortedWords) {
             System.out.println(count + ": " + word + " -> Path: " + wordPaths.get(word));
+            printPath();
             count--;
         }
+    }
+
+    public void printPath() {
+        System.out.println("    A     B     C     D   ");
+        System.out.println(" +-----+-----+-----+-----+");
+        for (int i = 1; i < 5; i++) {
+            System.out.println(i + "|     |     |     |     |");
+            System.out.println(" +-----+-----+-----+-----+");
+        }
+        System.out.println();
+        System.out.println();
     }
 
     public void depthFirstSearch() {
