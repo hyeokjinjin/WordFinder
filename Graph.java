@@ -3,6 +3,28 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+class Node {
+    int x, y;
+    List<Node> neighbors;
+    String letter;
+    
+    Node(int x, int y, String letter) {
+        this.x = x;
+        this.y = y;
+        this.letter = letter;
+        this.neighbors = new ArrayList<>();
+    }
+
+    void addNeighbor(Node neighborNode) {
+        neighbors.add(neighborNode);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + letter + ")";
+    }
+}
+
 public class Graph {
     private int boardSize;
     private Node[][] nodeList;
@@ -58,6 +80,45 @@ public class Graph {
         }
     }
 
+    public void depthFirstSearch() {
+        validWords.clear();
+        wordPaths.clear();
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                StringBuilder path = new StringBuilder();
+                List<Node> currentPath = new ArrayList<>();
+                dfs(nodeList[i][j], new HashSet<>(), path, trie.getRoot().children[nodeList[i][j].letter.charAt(0) - 'a'], currentPath);
+            }
+        }
+    }
+
+    private void dfs(Node node, Set<Node> visited, StringBuilder path, TrieNode trieNode, List<Node> currentPath) {
+        visited.add(node);
+        path.append(node.letter);
+        currentPath.add(node);
+
+        if (path.length() >= 3 && trieNode.isEndOfWord) {
+            validWords.add(path.toString());
+            wordPaths.put(path.toString(), new ArrayList<>(currentPath));
+        }
+        
+        for (int i = 0; i < 26; i++) {
+            TrieNode child = trieNode.children[i];
+            if (child != null) {
+                char letter = (char) ('a' + i);
+                for (Node neighbor : node.neighbors) {
+                    if (!visited.contains(neighbor) && neighbor.letter.equals(String.valueOf(letter))) {
+                        dfs(neighbor, visited, path, child, currentPath);
+                    }
+                }
+            }
+        }
+
+        visited.remove(node);
+        path.deleteCharAt(path.length() - 1);
+        currentPath.remove(currentPath.size() - 1);
+    }
+
     public void printGraph() {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -98,69 +159,7 @@ public class Graph {
                 System.out.println(" +-----+-----+-----+-----+-----+");
             }
         }
-        
         System.out.println();
         System.out.println();
-    }
-
-    public void depthFirstSearch() {
-        validWords.clear();
-        wordPaths.clear();
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                StringBuilder path = new StringBuilder();
-                List<Node> currentPath = new ArrayList<>();
-                dfs(nodeList[i][j], new HashSet<>(), path, trie.getRoot().children[nodeList[i][j].letter.charAt(0) - 'a'], currentPath);
-            }
-        }
-    }
-
-    private void dfs(Node node, Set<Node> visited, StringBuilder path, TrieNode trieNode, List<Node> currentPath) {
-        visited.add(node);
-        path.append(node.letter);
-        currentPath.add(node);
-
-        if (path.length() >= 3 && trieNode.isEndOfWord) {
-            validWords.add(path.toString());
-            wordPaths.put(path.toString(), new ArrayList<>(currentPath));
-        }
-        
-        for (int i = 0; i < 26; i++) {
-            TrieNode child = trieNode.children[i];
-            if (child != null) {
-                char letter = (char) ('a' + i);
-                for (Node neighbor : node.neighbors) {
-                    if (!visited.contains(neighbor) && neighbor.letter.equals(String.valueOf(letter))) {
-                        dfs(neighbor, visited, path, child, currentPath);
-                    }
-                }
-            }
-        }
-
-        visited.remove(node);
-        path.deleteCharAt(path.length() - 1);
-        currentPath.remove(currentPath.size() - 1);
-    }
-}
-
-class Node {
-    int x, y;
-    List<Node> neighbors;
-    String letter;
-    
-    Node(int x, int y, String letter) {
-        this.x = x;
-        this.y = y;
-        this.letter = letter;
-        this.neighbors = new ArrayList<>();
-    }
-
-    void addNeighbor(Node neighborNode) {
-        neighbors.add(neighborNode);
-    }
-
-    @Override
-    public String toString() {
-        return "(" + x + ", " + y + ", " + letter + ")";
     }
 }

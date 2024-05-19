@@ -1,3 +1,13 @@
+class TrieNode {
+    TrieNode[] children;
+    boolean isEndOfWord;
+
+    TrieNode() {
+        children = new TrieNode[26];
+        isEndOfWord = false;
+    }
+}
+
 public class Trie {
     private TrieNode root;
 
@@ -46,15 +56,5 @@ public class Trie {
             node = node.children[index];
         }
         return true;
-    }
-}
-
-class TrieNode {
-    TrieNode[] children;
-    boolean isEndOfWord;
-
-    TrieNode() {
-        children = new TrieNode[26];
-        isEndOfWord = false;
     }
 }
