@@ -83,12 +83,22 @@ public class Graph {
     }
 
     public void printPath() {
-        System.out.println("    A     B     C     D   ");
-        System.out.println(" +-----+-----+-----+-----+");
-        for (int i = 1; i < 5; i++) {
-            System.out.println(i + "|     |     |     |     |");
+        if (boardSize == 4) {
+            System.out.println("    A     B     C     D   ");
             System.out.println(" +-----+-----+-----+-----+");
+            for (int i = 1; i < 5; i++) {
+                System.out.println(i + "|     |     |     |     |");
+                System.out.println(" +-----+-----+-----+-----+");
+            }
+        } else if (boardSize == 5) {
+            System.out.println("    A     B     C     D     E   ");
+            System.out.println(" +-----+-----+-----+-----+-----+");
+            for (int i = 1; i < 6; i++) {
+                System.out.println(i + "|     |     |     |     |     |");
+                System.out.println(" +-----+-----+-----+-----+-----+");
+            }
         }
+        
         System.out.println();
         System.out.println();
     }
