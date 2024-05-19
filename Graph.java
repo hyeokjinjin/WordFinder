@@ -8,11 +8,13 @@ public class Graph {
     private Node[][] nodeList;
     private Set<String> validWords;
     private Trie trie;
+    private Map<String, List<Node>> wordPaths;
 
     public Graph(String[][] inputGrid, int boardSize) {
         this.boardSize = boardSize;
         nodeList = new Node[boardSize][boardSize];
         validWords = new HashSet<>();
+        wordPaths = new HashMap<>();
         trie = new Trie();        
         loadDictionary();
         createNodes(inputGrid);
@@ -33,8 +35,7 @@ public class Graph {
     private void createNodes(String[][] inputGrid) {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                String letter = inputGrid[i][j];
-                nodeList[i][j] = new Node(i, j, letter);
+                nodeList[i][j] = new Node(j, i, inputGrid[i][j]);
             }
         }
     }
@@ -75,28 +76,31 @@ public class Graph {
         System.out.println("Valid words found:");
         int count = sortedWords.size();
         for (String word : sortedWords) {
-            System.out.println(count + ": " + word);
+            System.out.println(count + ": " + word + " -> Path: " + wordPaths.get(word));
             count--;
         }
     }
 
     public void depthFirstSearch() {
         validWords.clear();
+        wordPaths.clear();
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 StringBuilder path = new StringBuilder();
-                dfs(nodeList[i][j], new HashSet<>(), path, trie.getRoot().children[nodeList[i][j].letter.charAt(0) - 'a']);
+                List<Node> currentPath = new ArrayList<>();
+                dfs(nodeList[i][j], new HashSet<>(), path, trie.getRoot().children[nodeList[i][j].letter.charAt(0) - 'a'], currentPath);
             }
         }
     }
 
-    private void dfs(Node node, Set<Node> visited, StringBuilder path, TrieNode trieNode) {
+    private void dfs(Node node, Set<Node> visited, StringBuilder path, TrieNode trieNode, List<Node> currentPath) {
         visited.add(node);
         path.append(node.letter);
-
+        currentPath.add(node);
 
         if (path.length() >= 3 && trieNode.isEndOfWord) {
             validWords.add(path.toString());
+            wordPaths.put(path.toString(), new ArrayList<>(currentPath));
         }
         
         for (int i = 0; i < 26; i++) {
@@ -105,7 +109,7 @@ public class Graph {
                 char letter = (char) ('a' + i);
                 for (Node neighbor : node.neighbors) {
                     if (!visited.contains(neighbor) && neighbor.letter.equals(String.valueOf(letter))) {
-                        dfs(neighbor, visited, path, child);
+                        dfs(neighbor, visited, path, child, currentPath);
                     }
                 }
             }
@@ -113,6 +117,7 @@ public class Graph {
 
         visited.remove(node);
         path.deleteCharAt(path.length() - 1);
+        currentPath.remove(currentPath.size() - 1);
     }
 }
 

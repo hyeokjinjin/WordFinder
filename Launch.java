@@ -82,7 +82,7 @@ public class Launch {
         long startTime = System.nanoTime();
 
         Graph graph = new Graph(inputGrid, size);
-        // graph.printGraph();
+        graph.printGraph();
         graph.depthFirstSearch();
         graph.printWords();
 
