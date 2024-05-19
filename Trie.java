@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
 public class Trie {
     private TrieNode root;
 
@@ -49,19 +46,6 @@ public class Trie {
             node = node.children[index];
         }
         return true;
-    }
-
-    boolean recursionBreak(String word) {
-        TrieNode current = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
-            int index = c - 'a';
-            if (current.children[index] == null) {
-                return true;
-            }
-            current = current.children[index];
-        }
-        return false;
     }
 }
 

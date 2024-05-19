@@ -44,7 +44,7 @@ public class Launch {
         int size = -1;
         while (size == -1) {
             try {
-                int input = Integer.valueOf(scan.nextLine());
+                int input = Integer.parseInt(scan.nextLine());
                 if (input != 4 && input != 5 && input != 2) {
                     throw new IllegalArgumentException();
                 }
@@ -84,6 +84,7 @@ public class Launch {
         Graph graph = new Graph(inputGrid, size);
         // graph.printGraph();
         graph.depthFirstSearch();
+        graph.printWords();
 
         long endTime = System.nanoTime();
         long durationMillis = (endTime - startTime) / 1_000_000; // Convert nanoseconds to milliseconds
