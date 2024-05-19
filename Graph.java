@@ -9,16 +9,16 @@ import java.util.Set;
 public class Graph {
     private int boardSize;
     private Node[][] nodes;
-    private Set<String> combinations;
-    private Set<String> dictionary;
+    private Set<String> validWords;
+    private Trie trie;
 
-    public Graph(String[][] inputRows, int boardSize) {
+    public Graph(String[][] inputGrid, int boardSize) {
         this.boardSize = boardSize;
         nodes = new Node[boardSize][boardSize];
-        combinations = new HashSet<>();
-        dictionary = new HashSet<>();
+        validWords = new HashSet<>();
+        trie = new Trie();        
         loadDictionary("words.txt");
-        createNodes(inputRows);
+        createNodes(inputGrid);
         connectNodes();
     }
 
@@ -26,17 +26,17 @@ public class Graph {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                dictionary.add(line.toLowerCase());
+                trie.insert(line.toLowerCase());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void createNodes(String[][] inputRows) {
+    private void createNodes(String[][] inputGrid) {
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                String letter = inputRows[i][j];
+                String letter = inputGrid[i][j];
                 nodes[i][j] = new Node(i, j, letter);
             }
         }
@@ -73,17 +73,11 @@ public class Graph {
     }
 
     public void depthFirstSearch() {
-        combinations.clear();
+        validWords.clear();
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 StringBuilder path = new StringBuilder();
-                dfs(nodes[i][j], new HashSet<>(), path);
-            }
-        }
-        Set<String> validWords = new HashSet<>();
-        for (String combo : combinations) {
-            if (dictionary.contains(combo)) {
-                validWords.add(combo);
+                dfs(nodes[i][j], new HashSet<>(), path, trie.getRoot().children[nodes[i][j].letter.charAt(0) - 'a']);
             }
         }
         for (String word : validWords) {
@@ -91,17 +85,28 @@ public class Graph {
         }
     }
 
-    private void dfs(Node node, Set<Node> visited, StringBuilder path) {
+    private void dfs(Node node, Set<Node> visited, StringBuilder path, TrieNode trieNode) {
+        if (trie.recursionBreak(path.toString())) {
+            return;
+        }
+
         visited.add(node);
         path.append(node.letter);
 
-        if (path.length() >= 3) {
-            combinations.add(path.toString());
+
+        if (path.length() >= 3 && trieNode.isEndOfWord) {
+            validWords.add(path.toString());
         }
         
-        for (Node neighbor : node.neighbors) {
-            if (!visited.contains(neighbor)) {
-                dfs(neighbor, visited, path);
+        for (int i = 0; i < 26; i++) {
+            TrieNode child = trieNode.children[i];
+            if (child != null) {
+                char letter = (char) ('a' + i);
+                for (Node neighbor : node.neighbors) {
+                    if (!visited.contains(neighbor) && neighbor.letter.equals(String.valueOf(letter))) {
+                        dfs(neighbor, visited, path, child);
+                    }
+                }
             }
         }
 

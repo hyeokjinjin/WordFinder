@@ -45,7 +45,7 @@ public class Launch {
         while (size == -1) {
             try {
                 int input = Integer.valueOf(scan.nextLine());
-                if (input != 4 && input != 5) {
+                if (input != 4 && input != 5 && input != 2) {
                     throw new IllegalArgumentException();
                 }
                 size = input;
@@ -79,10 +79,16 @@ public class Launch {
                 System.out.println("Invalid row input. Please enter the letters of row " + (i + 1) + ": ");
             }
         }
-        System.out.println(inputGrid);
+        long startTime = System.nanoTime();
+
         Graph graph = new Graph(inputGrid, size);
-        graph.printGraph();
+        // graph.printGraph();
         graph.depthFirstSearch();
+
+        long endTime = System.nanoTime();
+        long durationMillis = (endTime - startTime) / 1_000_000; // Convert nanoseconds to milliseconds
+        double durationSeconds = durationMillis / 1000.0; // Convert milliseconds to seconds
+        System.out.println("Execution time: " + durationSeconds + " seconds");
     }
 
 
