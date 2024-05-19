@@ -82,6 +82,7 @@ public class Launch {
         System.out.println(inputGrid);
         Graph graph = new Graph(inputGrid, size);
         graph.printGraph();
+        graph.depthFirstSearch();
     }
 
 

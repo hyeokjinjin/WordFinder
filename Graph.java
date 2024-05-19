@@ -1,15 +1,36 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Graph {
     private int boardSize;
     private Node[][] nodes;
+    private Set<String> combinations;
+    private Set<String> dictionary;
 
     public Graph(String[][] inputRows, int boardSize) {
         this.boardSize = boardSize;
         nodes = new Node[boardSize][boardSize];
+        combinations = new HashSet<>();
+        dictionary = new HashSet<>();
+        loadDictionary("words.txt");
         createNodes(inputRows);
         connectNodes();
+    }
+
+    private void loadDictionary(String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                dictionary.add(line.toLowerCase());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createNodes(String[][] inputRows) {
@@ -49,6 +70,43 @@ public class Graph {
                 System.out.println();
             }
         }
+    }
+
+    public void depthFirstSearch() {
+        combinations.clear();
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                StringBuilder path = new StringBuilder();
+                dfs(nodes[i][j], new HashSet<>(), path);
+            }
+        }
+        Set<String> validWords = new HashSet<>();
+        for (String combo : combinations) {
+            if (dictionary.contains(combo)) {
+                validWords.add(combo);
+            }
+        }
+        for (String word : validWords) {
+            System.out.println(word);
+        }
+    }
+
+    private void dfs(Node node, Set<Node> visited, StringBuilder path) {
+        visited.add(node);
+        path.append(node.letter);
+
+        if (path.length() >= 3) {
+            combinations.add(path.toString());
+        }
+        
+        for (Node neighbor : node.neighbors) {
+            if (!visited.contains(neighbor)) {
+                dfs(neighbor, visited, path);
+            }
+        }
+
+        visited.remove(node);
+        path.deleteCharAt(path.length() - 1);
     }
 }
 
