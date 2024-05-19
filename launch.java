@@ -5,38 +5,83 @@ public class Launch {
     private static String GAME_MODE = null;
 
     public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        Launch launch = new Launch(scan);
         
-        Launch launch = new Launch();
         if (GAME_MODE.equals("word hunt")) {
-            launch.wordHunt();
+            launch.wordHunt(scan);
         } else if (GAME_MODE.equals("anagrams")) {
             launch.anagrams();
         }
     }
 
 
-    public Launch() {
-        Scanner scan = new Scanner(System.in);
+    public Launch(Scanner scan) {
+        printLogo();
+        System.out.print("Enter Game Option: ");
         while (GAME_MODE == null) {
-            printLogo();
-            System.out.print("Enter Game Option: ");
-            String userInput = scan.nextLine();
+            String userInput = scan.nextLine().toLowerCase();
             if (userInput.equals("anagrams") || userInput.equals("word hunt")) {
                 GAME_MODE = userInput;
+                System.out.println("\033\143");
+            } else {
+                System.out.print("\033\143");
+                printLogo();
+                System.out.print("Invalid Option. Please Enter Valid Game Option: ");
             }
-            System.out.print("\033\143");
         }
-        scan.close();
     }
 
 
     public void anagrams() {
-
+        //TO-DO
     }
 
 
-    public void wordHunt() {
+    public void wordHunt(Scanner scan) {
+        printWordHunt();
+        System.out.print("Enter the size of the board (4 or 5): ");
+        int size = -1;
+        while (size == -1) {
+            try {
+                int input = Integer.valueOf(scan.nextLine());
+                if (input != 4 && input != 5) {
+                    throw new IllegalArgumentException();
+                }
+                size = input;
+            } catch (Exception e) {
+                System.out.println("\033\143");
+                printWordHunt();
+                System.out.println("Invalid Input. Please enter the size of the board (4 or 5): ");
+            }
+        }
 
+        String[][] inputGrid = new String[size][size];
+
+        int i = 0;
+        while (i < size) {
+            System.out.println("Enter row " + (i + 1) + " letters: ");
+            try {
+                String rowLetters = scan.nextLine();
+                if (rowLetters.length() != size) {
+                    throw new IllegalArgumentException();
+                }
+                for (int j = 0; j < size; j++) {
+                    if (Character.isDigit(rowLetters.charAt(j))) {
+                        throw new IllegalArgumentException();
+                    }
+                    inputGrid[i][j] = String.valueOf(rowLetters.charAt(j));
+                }
+                i++;
+            } catch (Exception e) {
+                System.out.println("\033\143");
+                printWordHunt();
+                System.out.println("Invalid row input. Please enter the letters of row " + (i + 1) + ": ");
+            }
+        }
+        System.out.println(inputGrid);
+        Graph graph = new Graph(inputGrid, size);
+        graph.printGraph();
     }
 
 
@@ -61,5 +106,24 @@ public class Launch {
         System.out.println("     - \"anagrams\"                                          !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("     - \"word hunt\"                                         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("                                                           !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");        
+    }
+
+    public void printWordHunt() {
+        System.out.println("                                                                                                     ");
+        System.out.println("                                                            ,--,                                     ");
+        System.out.println("           .---.                                          ,--.'|                             ___     ");
+        System.out.println("          /. ./|                       ,---,           ,--,  | :                           ,--.'|_   ");
+        System.out.println("      .--'.  ' ;   ,---.    __  ,-.  ,---.'|        ,---.'|  : '         ,--,      ,---,   |  | :,'  ");
+        System.out.println("     /__./ \\ : |  '   ,'\\ ,' ,'/ /|  |   | :        |   | : _' |       ,'_ /|  ,-+-. /  |  :  : ' :  ");
+        System.out.println(" .--'.  '   \\' . /   /   |'  | |' |  |   | |        :   : |.'  |  .--. |  | : ,--.'|'   |.;__,'  /   ");
+        System.out.println("/___/ \\ |    ' '.   ; ,. :|  |   ,',--.__| |        |   ' '  ; :,'_ /| :  . ||   |  ,\"' ||  |   |    ");
+        System.out.println(";   \\  \\;      :'   | |: :'  :  / /   ,'   |        '   |  .'. ||  ' | |  . .|   | /  | |:__,'| :    ");
+        System.out.println(" \\   ;  `      |'   | .; :|  | ' .   '  /  |        |   | :  | '|  | ' |  | ||   | |  | |  '  : |__  ");
+        System.out.println("  .   \\    .\\  ;|   :    |;  : | '   ; |:  |        '   : |  : ;:  | : ;  ; ||   | |  |/   |  | '.'| ");
+        System.out.println("   \\   \\   ' \\ | \\   \\  / |  , ; |   | '/  '        |   | '  ,/ '  :  `--'   \\   | |--'    ;  :    ; ");
+        System.out.println("    :   '  |--\"   `----'   ---'  |   :    :|        ;   : ;--'  :  ,      .-./   |/        |  ,   /  ");
+        System.out.println("     \\   \\ ;                      \\   \\  /          |   ,/       `--`----'   '---'          ---`-'   ");
+        System.out.println("      '---\"                        `----'           '---'                                            ");
+        System.out.println("                                                                                                     ");
     }
 }
