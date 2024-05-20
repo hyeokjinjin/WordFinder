@@ -90,8 +90,6 @@ public class Launch {
         long durationMillis = (endTime - startTime) / 1_000_000; // Convert nanoseconds to milliseconds
         double durationSeconds = durationMillis / 1000.0; // Convert milliseconds to seconds
         System.out.println("Execution time: " + durationSeconds + " seconds");
-
-        System.out.println("\033[48;5;57m" + "w");
     }
 
 

@@ -21,7 +21,7 @@ class Node {
 
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ", " + letter + ")";
+        return "(" + (x + 1) + ", " + (y + 1) + ", " + letter + ")";
     }
 }
 
@@ -137,28 +137,43 @@ public class Graph {
         System.out.println("Valid words found:");
         int count = sortedWords.size();
         for (String word : sortedWords) {
-            System.out.println(count + ": " + word + " -> Path: " + wordPaths.get(word));
-            printPath();
+            System.out.println(count + ": \033[38;5;0;48;5;11m" + word + "\u001B[0m -> Path: " + wordPaths.get(word));
+            printPath(wordPaths.get(word));
             count--;
         }
     }
 
-    public void printPath() {
-        if (boardSize == 4) {
-            System.out.println("    A     B     C     D   ");
-            System.out.println(" +-----+-----+-----+-----+");
-            for (int i = 1; i < 5; i++) {
-                System.out.println(i + "|     |     |     |     |");
-                System.out.println(" +-----+-----+-----+-----+");
-            }
-        } else if (boardSize == 5) {
-            System.out.println("    A     B     C     D     E   ");
-            System.out.println(" +-----+-----+-----+-----+-----+");
-            for (int i = 1; i < 6; i++) {
-                System.out.println(i + "|     |     |     |     |     |");
-                System.out.println(" +-----+-----+-----+-----+-----+");
+    public void printPath(List<Node> path) {
+        System.out.println((boardSize == 4) ? "    A     B     C     D   " : "    A     B     C     D     E   ");
+        String divider = (boardSize == 4) ? " +-----+-----+-----+-----+" : " +-----+-----+-----+-----+-----+";
+        System.out.println(divider);
+        
+        String[][] printBoard = new String[boardSize][boardSize];
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                printBoard[i][j] = "     ";
             }
         }
+
+        for (int i = 0; i < path.size(); i++) {
+            if (i == 0) {
+                printBoard[path.get(i).y][path.get(i).x] = "\033[4;38;5;0;48;5;10m  " + path.get(i).letter + "  \u001B[0m";
+            } else {
+                printBoard[path.get(i).y][path.get(i).x] = "\033[38;5;0;48;5;10m  " + path.get(i).letter + "  \u001B[0m";
+            }
+            
+        }
+
+        for (int i = 0; i < boardSize; i++) {
+            String output = String.valueOf(i + 1); 
+            for (int j = 0; j < boardSize; j++) {
+                output += "|";
+                output += printBoard[i][j];
+            }
+            System.out.println(output + "|");
+            System.out.println(divider);
+        }
+
         System.out.println();
         System.out.println();
     }
