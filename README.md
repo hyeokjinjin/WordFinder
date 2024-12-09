@@ -1,5 +1,5 @@
-# Word Solver
-Word Solver is a Java/Python program that will solve your Word Hunt boards for you.
+# Word Finder
+Word Finder is a Java/Python program that will solve your Word Hunt boards for you.
 
 ## To Run
 Utilize "iPhone Mirroring" application on MacOS to play GamePigeon games.
