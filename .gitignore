@@ -21,6 +21,11 @@
 *.zip
 .idea
 .vscode
+OCR Trainer
+__pycache__
+.python-version
+tile_recognition_model.keras
+TestingCursorMover.py
 
 # Logs and databases #
 ######################

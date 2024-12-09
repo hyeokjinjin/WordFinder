@@ -28,3 +28,5 @@ Enter the 4 letters row by row.
 Answers will be printed out on the console with the highest point answers first.
 The letter that starts each word will be highlighted.
 ```
+
+javac -cp "lib/*" Graph.java Trie.java Launch.java; java -cp ".:lib/*" Launch; python CursorMover.py

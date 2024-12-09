@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Launch {
@@ -94,34 +91,6 @@ public class Launch {
         long durationMillis = (endTime - startTime) / 1_000_000; // Convert nanoseconds to milliseconds
         double durationSeconds = durationMillis / 1000.0; // Convert milliseconds to seconds
         System.out.println("Execution time: " + durationSeconds + " seconds");
-
-        // try {
-        //     // Specify the Python script path
-        //     String pythonScriptPath = "CursorMover.py";
-            
-        //     // Create the command to execute the Python script
-        //     ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath);
-
-        //     // Redirect error and output streams to read the output/error
-        //     processBuilder.redirectErrorStream(true);
-
-        //     // Start the process
-        //     Process process = processBuilder.start();
-
-        //     // Get the output of the Python script
-        //     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        //     String line;
-        //     while ((line = reader.readLine()) != null) {
-        //         System.out.println(line);
-        //     }
-
-        //     // Wait for the process to exit and get the exit code
-        //     int exitCode = process.waitFor();
-        //     System.out.println("Python script executed with exit code: " + exitCode);
-
-        // } catch (IOException | InterruptedException e) {
-        //     e.printStackTrace();
-        // }
     }
 
 

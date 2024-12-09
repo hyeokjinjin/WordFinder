@@ -2,7 +2,7 @@ from pynput.mouse import Button, Controller
 import time
 import json
 import ast
-import sys
+import subprocess
 
 # Initialize the mouse controller
 mouse = Controller()
@@ -18,8 +18,6 @@ def wait_for_key_and_capture_position():
 def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
     tile_width = (x2 - x1) // grid_size
     tile_height = (y2 - y1) // grid_size
-
-    print(f"Tile size: {tile_width}x{tile_height}")
     
     tilesPos = {}
     
@@ -36,8 +34,8 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
             tilesPos[(col, row)] = (tile_x, tile_y)
     
     for path in word_paths:
-        if ((time.time() - start_time) > 65):
-            print("Stopping because time")
+        if ((time.time() - start_time) > 70):
+            print("Stopping due to time limit")
             break
         mouse.position = (tilesPos[(path[0])])
         time.sleep(0.1)
@@ -52,6 +50,9 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
         time.sleep(0.1)
 
 def main():
+    subprocess.run(['javac', '-cp', 'lib/*', 'Graph.java', 'Trie.java', 'Launch.java'])
+    subprocess.run(['java', '-cp', '.:lib/*', 'Launch'])
+
     # Start the timer
     start_time = time.time()
     
@@ -74,19 +75,12 @@ def main():
 
 
     # Getting user input for board size and location
-    print("Please press Enter to capture the first corner of the rectangle.")
     (x1, y1) = wait_for_key_and_capture_position()
-    
-    print("Please press Enter again to capture the second corner of the rectangle.")
     (x2, y2) = wait_for_key_and_capture_position()
     
     # Calculate rectangle corners
     top_left = (min(x1, x2), min(y1, y2))
     bottom_right = (max(x1, x2), max(y1, y2))
-    
-    print("Rectangle corner coordinates:")
-    print(f"Top-left corner: {top_left}")
-    print(f"Bottom-right corner: {bottom_right}")
     
     center_x = (top_left[0] + bottom_right[0]) // 2
     center_y = (top_left[1] + bottom_right[1]) // 2
