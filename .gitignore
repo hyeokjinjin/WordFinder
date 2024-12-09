@@ -24,8 +24,6 @@
 OCR Trainer
 __pycache__
 .python-version
-tile_recognition_model.keras
-TestingCursorMover.py
 
 # Logs and databases #
 ######################
@@ -49,3 +47,7 @@ savedNodes.json
 **/README Images
 
 **/.idea/workspace.xml **/.idea/tasks.xml
+
+tile_recognition_model.keras
+TestingCursorMover.py
+Launch.java
