@@ -11,7 +11,7 @@ mouse = Controller()
 def wait_for_key_and_capture_position():
     input("Press Enter to capture corner position")
     x, y = mouse.position
-    print(f"Mouse position captured at: ({x}, {y})")
+    print(f"Mouse position captured at: ({x}, {y})\n")
     return (x, y)
 
 # Function to drag across each row of tiles
@@ -34,7 +34,7 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
             tilesPos[(col, row)] = (tile_x, tile_y)
     
     for path in word_paths:
-        if ((time.time() - start_time) > 70):
+        if ((time.time() - start_time) > 80):
             print("Stopping due to time limit")
             break
         mouse.position = (tilesPos[(path[0])])
@@ -50,19 +50,41 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
         time.sleep(0.1)
 
 def main():
-    subprocess.run(['javac', '-cp', 'lib/*', 'Graph.java', 'Trie.java', 'Launch.java'])
-    subprocess.run(['java', '-cp', '.:lib/*', 'Launch'])
-
+    grid_size = -1
+    while grid_size == -1:
+        try:
+            inputValue = int(input("Enter board size (4 or 5): "))
+            if (inputValue != 4 and inputValue != 5):
+                raise ValueError
+            grid_size = inputValue
+        except ValueError:
+            print("Invalid input. Please enter the size of the game board.")
+    
+    rowList = []
+    
     # Start the timer
     start_time = time.time()
+    
+    i = 0
+    while i < grid_size:
+        try:
+            rowLetters = input(f"Enter row {i + 1} letters: ").strip()
+            if len(rowLetters) != grid_size:
+                raise ValueError
+            rowList.append(rowLetters)
+            i += 1
+        except ValueError:
+            print(f"Invalid row input. Please enter the {grid_size} letters of row {i + 1}")
+    
+    encodedList = json.dumps(rowList)
+    
+    subprocess.run(['javac', '-cp', 'lib/*', 'Graph.java', 'Trie.java', 'Launch.java'])
+    subprocess.run(['java', '-cp', '.:lib/*', 'Graph', str(grid_size), encodedList])
     
     # Reading JSON file and converting paths to tuple list
     # Open json
     with open("savedNodes.json", "r") as file:
         data = json.load(file)
-        
-    # Save the boardSize to the variable 'size'
-    grid_size = data['boardSize']
 
     # Initialize an empty list to store all word path lists
     all_word_paths = []

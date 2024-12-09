@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.json.JSONArray;
+
 
 class Node {
     int x, y;
@@ -203,7 +205,7 @@ public class Graph {
         try {
             // Write the map to a JSON file
             objectMapper.writeValue(new File(filePath), jsonWordPaths);
-            System.out.println("Word paths saved as JSON at: " + filePath);
+            System.out.println("Word paths saved as JSON at: " + filePath + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -233,5 +235,26 @@ public class Graph {
                 });
 
         return jsonWordPaths;
+    }
+
+    public static void main(String[] args) {
+        int size = Integer.parseInt(args[0]);
+        String[][] inputGrid = new String[size][size];
+        
+        String jsonString = args[1];
+        // Decode the JSON string into an array
+        JSONArray jsonArray = new JSONArray(jsonString);
+        String[] stringArray = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++) {
+            stringArray[i] = jsonArray.getString(i);
+            for (int j = 0; j < size; j++) {
+                inputGrid[i][j] = String.valueOf(stringArray[i].charAt(j));
+            }
+        }
+
+        Graph graph = new Graph(inputGrid, size);
+        graph.depthFirstSearch();
+        // graph.printWords();
+        graph.saveWordPathsAsJson("savedNodes.json");
     }
 }
