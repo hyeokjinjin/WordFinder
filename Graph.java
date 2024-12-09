@@ -1,7 +1,10 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 class Node {
     int x, y;
@@ -176,5 +179,59 @@ public class Graph {
 
         System.out.println();
         System.out.println();
+    }
+
+    public void saveWordPathsAsJson(String filePath) {
+        // Create an ObjectMapper instance
+        ObjectMapper objectMapper = new ObjectMapper();
+        
+        // Enable pretty-printing for the output JSON
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        // Create a map to store the JSON structure
+        Map<String, Object> jsonWordPaths = new HashMap<>();
+
+        // Add the boardSize to the map
+        jsonWordPaths.put("boardSize", boardSize);
+
+        // Create a map to store the JSON structure, converting List<Node> to a list of node positions
+        Map<String, List<String>> wordPathsJsonFormat = convertPathsToJsonFormat();
+
+        // Add the word paths to the map
+        jsonWordPaths.put("wordPaths", wordPathsJsonFormat);
+
+        try {
+            // Write the map to a JSON file
+            objectMapper.writeValue(new File(filePath), jsonWordPaths);
+            System.out.println("Word paths saved as JSON at: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Helper method to convert word paths to a suitable format for JSON serialization
+    private Map<String, List<String>> convertPathsToJsonFormat() {
+        // Use a LinkedHashMap to maintain insertion order
+        Map<String, List<String>> jsonWordPaths = new LinkedHashMap<>();
+
+        // Sort the entries by path length in descending order
+        wordPaths.entrySet()
+                .stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size())) // Sort by size descending
+                .forEach(entry -> {
+                    String word = entry.getKey();
+                    List<Node> path = entry.getValue();
+
+                    // Convert the path to a list of node positions (e.g., "(x,y)" format)
+                    List<String> pathAsStrings = new ArrayList<>();
+                    for (Node node : path) {
+                        pathAsStrings.add("(" + (node.x) + "," + (node.y) + ")");
+                    }
+
+                    // Add the word and its corresponding path to the map
+                    jsonWordPaths.put(word, pathAsStrings);
+                });
+
+        return jsonWordPaths;
     }
 }

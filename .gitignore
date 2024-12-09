@@ -19,6 +19,8 @@
 *.rar
 *.tar
 *.zip
+.idea
+.vscode
 
 # Logs and databases #
 ######################
@@ -35,6 +37,9 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+gameHawk.iml
+.editorconfig
+savedNodes.json
 
 **/README Images
 
