@@ -4,6 +4,7 @@ import json
 import ast
 import subprocess
 import os
+import boardAnalyzer
 
 # Initialize the mouse controller and coords list for two corners of board
 mouse = Controller()
@@ -60,47 +61,25 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
             os._exit(0)
             break
         mouse.position = (tilesPos[(path[0])])
-        time.sleep(0.1)
+        time.sleep(0.075)
         
         mouse.press(Button.left)
         
         for i in range(1, len(path)):
             mouse.position = tilesPos[(path[i])]
-            time.sleep(0.1)
+            time.sleep(0.075)
 
         mouse.release(Button.left)
-        time.sleep(0.1)
-    print("End of List")
+        time.sleep(0.075)
+    print("Finished solving! Reached end of list.")
 
 
 def main():
-    # Get input for board size
-    grid_size = -1
-    while grid_size == -1:
-        try:
-            inputValue = int(input("Enter board size (4 or 5): "))
-            if (inputValue != 4 and inputValue != 5):
-                raise ValueError
-            grid_size = inputValue
-        except ValueError:
-            print("Invalid input. Please enter the size of the game board.")
+    start_time = time.time()
+    grid_size, rowList = boardAnalyzer.main()
     
-    rowList = []
-    
-    i = 0
-    while i < grid_size:
-        try:
-            rowLetters = input(f"Enter row {i + 1} letters: ").strip()
-            if len(rowLetters) != grid_size:
-                raise ValueError
-            rowList.append(rowLetters)
-            i += 1
-            if i == 1:
-                # Start the timer after the first row input
-                start_time = time.time()
-        except ValueError:
-            print(f"Invalid row input. Please enter the {grid_size} letters of row {i + 1}")
-    
+    rowList = ["".join(row).lower() for row in rowList]
+
     # Encode the list of rows as a json file to send to Java
     encodedList = json.dumps(rowList)
     
@@ -122,16 +101,19 @@ def main():
         all_word_paths.append(converted_path)
 
     # Getting user input for board size and location
-    top_left, bottom_right = capture_two_corners()
-    
+    top_left, bottom_right = boardAnalyzer.coords[0], boardAnalyzer.coords[1]
+
     # Click back into iPhone Mirroring application to refocus
     center_x = (top_left[0] + bottom_right[0]) // 2
     center_y = (top_left[1] + bottom_right[1]) // 2
     mouse.position = (center_x, center_y)
+    time.sleep(0.05)
     mouse.press(Button.left)
     mouse.release(Button.left)
+    time.sleep(0.05)
     
     # Drag across each row of tiles
+    print("Solving...")
     drag_across_tiles(top_left[0], top_left[1], bottom_right[0], bottom_right[1], grid_size, all_word_paths, start_time)
 
 if __name__ == "__main__":

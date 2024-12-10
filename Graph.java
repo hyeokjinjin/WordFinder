@@ -205,7 +205,7 @@ public class Graph {
         try {
             // Write the map to a JSON file
             objectMapper.writeValue(new File(filePath), jsonWordPaths);
-            System.out.println("Word paths saved as JSON at: " + filePath + "\n");
+            //System.out.println("Word paths saved as JSON at: " + filePath + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
