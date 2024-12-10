@@ -109,6 +109,7 @@ def main():
     mouse.position = (center_x, center_y)
     time.sleep(0.05)
     mouse.press(Button.left)
+    time.sleep(0.05)
     mouse.release(Button.left)
     time.sleep(0.05)
     

@@ -1,7 +1,6 @@
 import pytesseract
 from PIL import Image, ImageEnhance
 import numpy as np
-import os
 import pyautogui
 from pynput import mouse
 import re
@@ -97,7 +96,7 @@ def process_tile(image_tile, save_path, row, col):
 def print_board(letters):
     print("\nDetected Letters:")
     for row in letters:
-        print(" ".join(row))
+        print(" ".join(row).upper())
     print()
 
 def process_board(board_image, board_size, output_folder):
