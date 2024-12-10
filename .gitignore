@@ -52,3 +52,4 @@ __pycache__
 .python-version
 savedNodes.json
 gameHawk.iml
+output_tiles

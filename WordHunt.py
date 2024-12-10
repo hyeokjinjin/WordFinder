@@ -1,26 +1,46 @@
-from pynput.mouse import Button, Controller
+from pynput.mouse import Button, Controller, Listener
 import time
 import json
 import ast
 import subprocess
+import os
 
-# Initialize the mouse controller
+# Initialize the mouse controller and coords list for two corners of board
 mouse = Controller()
+coords = []
 
-# Function to wait for Enter key press and capture mouse position
-def wait_for_key_and_capture_position():
-    input("Press Enter to capture corner position")
-    x, y = mouse.position
-    print(f"Mouse position captured at: ({x}, {y})\n")
-    return (x, y)
 
-# Function to drag across each row of tiles
+# Listener to capture mouse click positions and store them in a list.
+# Stop listening after two clicks.
+def on_click(x, y, button, pressed):
+    if pressed:
+        print(f"Mouse clicked at ({x}, {y})")
+        coords.append((x, y))
+        if len(coords) == 2:
+            return False  # Stop the listener after two clicks
+
+
+# Wait for two mouse clicks to capture the top-left and bottom-right corners.
+def capture_two_corners():
+    print("Click the top-left corner of the board.")
+    print("Then click the bottom-right corner of the board.")
+    with Listener(on_click=on_click) as listener:
+        listener.join()
+    
+    if len(coords) != 2:
+        raise ValueError("Failed to capture two corners.")
+    
+    return coords[0], coords[1]
+
+
+# Function to automate dragging across tiles for word combinations
 def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
     tile_width = (x2 - x1) // grid_size
     tile_height = (y2 - y1) // grid_size
     
     tilesPos = {}
     
+    # Populate tilesPos dictionary with grid coordinate as key and mouse cursor coordinates as value
     for row in range(grid_size):
         start_x = x1 + (tile_width // 2)
         start_y = y1 + (row * tile_height) + (tile_height // 2)
@@ -33,9 +53,11 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
             
             tilesPos[(col, row)] = (tile_x, tile_y)
     
+    # Move mouse cursor automatically for each word in file
     for path in word_paths:
         if ((time.time() - start_time) > 80):
             print("Stopping due to time limit")
+            os._exit(0)
             break
         mouse.position = (tilesPos[(path[0])])
         time.sleep(0.1)
@@ -48,8 +70,11 @@ def drag_across_tiles(x1, y1, x2, y2, grid_size, word_paths, start_time):
 
         mouse.release(Button.left)
         time.sleep(0.1)
+    print("End of List")
+
 
 def main():
+    # Get input for board size
     grid_size = -1
     while grid_size == -1:
         try:
@@ -62,9 +87,6 @@ def main():
     
     rowList = []
     
-    # Start the timer
-    start_time = time.time()
-    
     i = 0
     while i < grid_size:
         try:
@@ -73,16 +95,20 @@ def main():
                 raise ValueError
             rowList.append(rowLetters)
             i += 1
+            if i == 1:
+                # Start the timer after the first row input
+                start_time = time.time()
         except ValueError:
             print(f"Invalid row input. Please enter the {grid_size} letters of row {i + 1}")
     
+    # Encode the list of rows as a json file to send to Java
     encodedList = json.dumps(rowList)
     
+    # Executing Java for DFS and word list answer key
     subprocess.run(['javac', '-cp', 'lib/*', 'Graph.java', 'Trie.java', 'Launch.java'])
     subprocess.run(['java', '-cp', '.:lib/*', 'Graph', str(grid_size), encodedList])
     
     # Reading JSON file and converting paths to tuple list
-    # Open json
     with open("savedNodes.json", "r") as file:
         data = json.load(file)
 
@@ -95,15 +121,10 @@ def main():
         converted_path = [ast.literal_eval(coord) for coord in path]
         all_word_paths.append(converted_path)
 
-
     # Getting user input for board size and location
-    (x1, y1) = wait_for_key_and_capture_position()
-    (x2, y2) = wait_for_key_and_capture_position()
+    top_left, bottom_right = capture_two_corners()
     
-    # Calculate rectangle corners
-    top_left = (min(x1, x2), min(y1, y2))
-    bottom_right = (max(x1, x2), max(y1, y2))
-    
+    # Click back into iPhone Mirroring application to refocus
     center_x = (top_left[0] + bottom_right[0]) // 2
     center_y = (top_left[1] + bottom_right[1]) // 2
     mouse.position = (center_x, center_y)
