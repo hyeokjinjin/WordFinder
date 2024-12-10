@@ -22,7 +22,7 @@ Enter row {3} letters: NSBM
 Enter row {4} letters: UIOE
 ```
 
-Capture the board on your screen by pressing 'Enter' after cursor is on top left of board and bottom right of board:
+Capture the board on your screen by clicking on the top left of board and the bottom right of board with your mouse cursor:
 ``` Python
 Press Enter to capture corner position (Press Enter)
 Mouse position captured at: (960.84375, 486.4921875)
